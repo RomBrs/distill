@@ -10,6 +10,11 @@ import pytorch_lightning as pl
 from datetime import datetime
 from pytorch_lightning import Trainer
 from pytorch_lightning.loggers import TensorBoardLogger
+from pytorch_lightning.callbacks import ModelCheckpoint
+
+from utils.model import ResNetCustom
+from utils.transform import transform_train, transform_val
+from utils.dataset import CustomImageDataset
 
 NAME = "resnet18"
 VERSION = "__" + datetime.now().strftime("%d/%m/%Y %H:%M:%S")
@@ -57,15 +62,27 @@ class LitAutoEncoder(pl.LightningModule):
 #logger
 logger = TensorBoardLogger(save_dir = "lightning_logs/", name=NAME, version = VERSION)
 
+# checkpoint
+checkpoint_callback = ModelCheckpoint(
+     monitor='val_loss',
+     dirpath='model_weights/',
+     filename=VERSION + '-{epoch:02d}-{val_loss:.2f}',
+		 save_top_k = 1,
+		 mode = 'min',
+		 save_weights_only = True)
+
 # model
+model = ResNetCustom()
 model = LitAutoEncoder(model)
+# model = MyLightningModule.load_from_checkpoint("/path/to/checkpoint.ckpt")
 
 # training
 trainer = pl.Trainer(logger=logger,
                      accelerator="cpu",
                      precision=32,
-										 limit_train_batches=1.0,
-										 check_val_every_n_epoch=5)
+										 limit_train_batches=0.05,
+										 check_val_every_n_epoch=5,
+										 callbacks=[checkpoint_callback],
+										 )
 # trainer = pl.Trainer(gpus=4, num_nodes=8, precision=16, limit_train_batches=0.5)
 trainer.fit(model)
-    

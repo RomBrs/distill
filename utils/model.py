@@ -15,4 +15,4 @@ class ResNetCustom(nn.Module):
     def forward(self, x):
       return self.last_layer(self.model(x))
 
-model = ResNetCustom()
+# model = ResNetCustom()
