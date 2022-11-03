@@ -40,3 +40,16 @@ class CustomImageDataset(Dataset):
         if self.val_transform:
             image = self.val_transform(image = image)["image"]
         return image, label
+
+
+
+# training_data = CustomImageDataset(img_dir = "/content/images", transform = transform_train)
+# val_data = CustomImageDataset(img_dir = "/content/images", val_transform=transform_val)
+
+# train_dataloader = DataLoader(training_data, batch_size=64, shuffle=True)
+# val_dataloader = DataLoader(val_data, batch_size=64, shuffle=False)
+
+# for i in training_data:
+#   break
+
+# plt.imshow(i[0]["image"])
